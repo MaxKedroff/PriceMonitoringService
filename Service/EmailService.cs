@@ -11,7 +11,7 @@ namespace PriceMonitoringService.Service
        public async Task SendEmailAsync(string email, string subject, string message)
         {
             using var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "MaxKed12345@yandex.ru"));
+            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "emailHere"));
             emailMessage.To.Add(new MailboxAddress("", email));
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -21,7 +21,7 @@ namespace PriceMonitoringService.Service
             using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 await client.ConnectAsync("smtp.yandex.ru", 465, SecureSocketOptions.SslOnConnect);
-                await client.AuthenticateAsync("MaxKed12345@yandex.ru", "doqjojsfuabagxnr");
+                await client.AuthenticateAsync("email", "password");
                 await client.SendAsync(emailMessage);
 
                 await client.DisconnectAsync(true);
