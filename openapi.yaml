@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: PriceMonitoringService API
+  version: 1.0.0
+  description: API для управления подписками и получения актуальных цен.
+servers:
+  - url: http://localhost:5000
+    description: Локальный сервер (HTTP)
+  - url: https://localhost:5001
+    description: Локальный сервер (HTTPS)
+  - url: http://localhost:5176
+    description: Локальный сервер (HTTP) - дополнительный
+
+paths:
+  /api/Subscription:
+    post:
+      summary: Создать новую подписку
+      description: Создает подписку для отслеживания цены по заданному URL с уведомлением на Email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionDTO'
+      responses:
+        '200':
+          description: Подписка успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Неверный запрос, отсутствует Url или Email
+
+  /api/Subscription/prices:
+    get:
+      summary: Получить список актуальных цен
+      description: Возвращает список подписок с информацией о последней цене и времени последней проверки.
+      responses:
+        '200':
+          description: Список подписок
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPrice'
+
+components:
+  schemas:
+    SubscriptionDTO:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "URL, который необходимо отслеживать"
+        email:
+          type: string
+          description: "Email для уведомлений"
+      required:
+        - url
+        - email
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "Уникальный идентификатор подписки"
+        url:
+          type: string
+          description: "Отслеживаемый URL"
+        email:
+          type: string
+          description: "Email для уведомлений"
+        lastPrice:
+          type: number
+          format: double
+          nullable: true
+          description: "Последняя зафиксированная цена (если еще не установлена, значение null)"
+        lastChecked:
+          type: string
+          format: date-time
+          description: "Дата и время последней проверки"
+      example:
+        id: 1
+        url: "https://example.com/product/123"
+        email: "user@example.com"
+        lastPrice: 99.99
+        lastChecked: "2025-01-01T12:00:00Z"
+
+    SubscriptionPrice:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "URL отслеживаемого товара"
+        lastPrice:
+          type: number
+          format: double
+          nullable: true
+          description: "Последняя зафиксированная цена"
+        lastChecked:
+          type: string
+          format: date-time
+          description: "Дата и время последней проверки"
+      example:
+        url: "https://example.com/product/456"
+        lastPrice: 149.99
+        lastChecked: "2025-02-01T09:30:00Z"
