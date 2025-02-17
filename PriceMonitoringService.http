@@ -1,0 +1,6 @@
+@PriceMonitoringService_HostAddress = http://localhost:5176
+
+GET {{PriceMonitoringService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
